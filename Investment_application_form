@@ -1,0 +1,117 @@
+Option Explicit
+Sub Formularz()
+
+'Wyłączenie wyskakujących okienek
+    Application.DisplayAlerts = False
+
+'Deklaracja typu zmiennych
+    Dim Nazwa As String
+    Dim Sciezka As String
+
+'Usunięcie scalenia komórek
+    Sheets("Arkusz2").Select
+    Range("A1:J250").Select
+    Selection.UnMerge
+        
+'Pobranie ilości urządzeń
+    Sheets("Zgłoszenie inwestycji").Select
+    
+    Range("D177").Select
+    Selection.FormulaR1C1 = _
+        "=VALUE(IFERROR(XLOOKUP(""NCHS1C"",Arkusz2!C[-1],Arkusz2!C[3]),""0""))"
+                  
+    Range("D178").Select
+    Selection.FormulaR1C1 = _
+        "=VALUE(IFERROR(XLOOKUP(""NCHS4C"",Arkusz2!C[-1],Arkusz2!C[3]),""0""))"
+    
+    Range("D179").Select
+    Selection.FormulaR1C1 = _
+        "=VALUE(IFERROR(XLOOKUP(""NCHS8C"",Arkusz2!C[-1],Arkusz2!C[3]),""0""))"
+        
+    Range("D177:D179").Select
+    Selection.NumberFormat = "0;-0;;@"
+    
+      
+'Pobranie zestawień o symbolach zgodnych z raportem doboru
+
+    Range("D19:D225").Select
+    Selection.SpecialCells(xlCellTypeBlanks).Select
+    Selection.FormulaR1C1 = _
+        "=VALUE(IFERROR(XLOOKUP(RC[-1],Arkusz2!C[-1],Arkusz2!C[3]),""0""))"
+    
+
+'Ustawienie formatowania bez widocznych "0"
+   Selection.NumberFormat = "0;-0;;@"
+
+
+'Wklejenie samych wartości zamiast formuł
+  
+    Range("D19:D225").Select
+    Selection.Copy
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Range("D19").Select
+
+
+'Usunięcie zakładki z ilościami z programu doborowego
+     Worksheets("Arkusz2").Delete
+  
+'Zapisanie pliku
+     Nazwa = ThisWorkbook.Sheets("Zgłoszenie inwestycji").Range("D2").Value
+     Sciezka = ThisWorkbook.Path & "\"
+        
+  ThisWorkbook.SaveAs Filename:=Sciezka & Nazwa & " - formularz.xlsx", _
+      FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
+        
+        
+'WYSYŁANIE MAILA
+
+    Dim OutlookApp As Object
+    Dim MailItem As Object
+    Dim Załącznik As String
+    Dim EmailBody As String
+
+' Ścieżka do pliku, który ma być załączony
+    Załącznik = Sciezka & Nazwa & " - formularz.xlsx"  
+    
+    
+' Tworzenie instancji Outlooka
+    On Error Resume Next
+    Set OutlookApp = GetObject(, "Outlook.Application")
+    If OutlookApp Is Nothing Then
+        Set OutlookApp = CreateObject("Outlook.Application")
+    End If
+    On Error GoTo 0
+        
+
+' Tworzenie nowej wiadomości e-mail
+    Set MailItem = OutlookApp.CreateItem(0)
+    
+' Konfigurowanie wiadomości e-mail
+    With MailItem
+        .To = "gmv@gree.pl" ' Ustaw adres e-mail odbiorcy
+        .Subject = Nazwa & " - formularz"
+        .Display ' Wyświetlenie wiadomości, aby domyślny podpis został dodany
+        
+' Pobierz istniejącą treść
+        EmailBody = .HTMLBody
+
+' Dodaj treść wiadomości przed podpisem
+        .HTMLBody = "Cześć,<br><br>W załączniku przesyłam formularz zgłoszeniowy.<br>" & EmailBody
+
+' Dodanie załącznika
+        .Attachments.Add Załącznik
+    End With
+        
+        
+' Czyszczenie zmiennych
+    Set MailItem = Nothing
+      Set OutlookApp = Nothing
+
+     
+'Włączenie wyskakujących okienek
+    Application.DisplayAlerts = True
+    
+End Sub
+
+
