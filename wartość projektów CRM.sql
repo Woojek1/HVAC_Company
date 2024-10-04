@@ -1,4 +1,7 @@
-select a.pnum numer_projektu, a.pnam nazwa_projektu, sum(a.sm) wartosc_sprzedazy, a.koord koordynator
+select a.pnum numer_projektu
+	,a.pnam nazwa_projektu
+	,sum(a.sm) wartosc_sprzedazy
+	,a.koord koordynator
 from (		
 	select 
 		ord.ProductName 
