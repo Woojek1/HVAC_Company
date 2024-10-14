@@ -1,5 +1,8 @@
 Sub SortGMV()
 
+' Ustawienie zakładki "Propozycja projektu" jako aktywnej
+Sheets("Propozycja projektu").Activate
+
 'zmienne
 Dim Iloscwierszy As Long
 Iloscwierszy = Range("b7").CurrentRegion.Rows.Count
