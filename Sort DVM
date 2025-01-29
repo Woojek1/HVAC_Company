@@ -1,0 +1,27 @@
+Option Explicit
+
+Sub SortowanieDVM()
+'
+' SortowanieDVM Makro
+'
+' Klawisz skrótu: Ctrl+Shift+D
+'
+    ActiveWorkbook.Worksheets("Urządzenie").Range("a1").CurrentRegion.Select
+    Selection.AutoFilter
+    ActiveWorkbook.Worksheets("Urządzenie").AutoFilter.Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Urządzenie").AutoFilter.Sort.SortFields.Add2 Key:= _
+        Range("A2:A9"), SortOn:=xlSortOnValues, Order:=xlAscending, CustomOrder:= _
+        "AM040BXMDGR/EU,AM050BXMDGR/EU,AM060BXMDGR/EU,AM080BXMWGH/EU,AM100BXMWGH/EU,AM120BXMWGH/EU,AM080AXVAGH/EU,AM100AXVAGH/EU,AM120AXVAGH/EU,AM140AXVAGH/EU,AM160AXVAGH/EU,AM180AXVAGH/EU,AM200AXVAGH/EU,AM220AXVAGH/EU,AM240AXVAGH/EU,AM260AXVAGH/EU,AM015NNNDEH/EU,AM022NNNDEH/EU,AM028NNNDEH/EU,AM036NNNDEH/EU,AM045NNNDEH/EU,AM056NNNDEH/EU,AM060NNNDEH/EU,AM028AN4PKH/EU,AM036AN4" & _
+        "PKH/EU,AM045AN4PKH/EU,AM056AN4PKH/EU,AM071AN4PKH/EU,AM090AN4PKH/EU,AM0112AN4PKH/EU,AM0128AN4PKH/EU,AM0140AN4PKH/EU,AM015TNVDKH/EU,AM022TNVDKH/EU,AM028TNVDKH/EU,AM036TNVDKH/EU,AM045TNVDKH/EU,AM056TNVDKH/EU,AM071TNVDKH/EU,AM082TNVDKH/EU" & _
+        ""
+  
+    With ActiveWorkbook.Worksheets("Urządzenie").AutoFilter.Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    Selection.AutoFilter
+    Range("A1").Select
+End Sub
