@@ -1,0 +1,74 @@
+Sub SortGMV()
+
+' Ustawienie zakładki "Propozycja projektu" jako aktywnej
+Sheets("Propozycja projektu").Activate
+
+'zmienne
+Dim Iloscwierszy As Long
+Iloscwierszy = Range("b7").CurrentRegion.Rows.Count
+
+Dim i As Long
+
+' usunięcie scalenia
+Range("b7").CurrentRegion.Select
+Selection.UnMerge
+
+'usuniecie zbednych odstepow
+Range("E7").Select
+Range(Selection, Selection.End(xlDown)).Select
+    Dim zakres As Range
+    Dim komorka As Range
+    
+' Ustaw zakres na zaznaczone komórki
+    Set zakres = Selection
+    
+' Pętla przez wszystkie komórki w zaznaczonym zakresie
+    For Each komorka In zakres
+        If Not IsError(komorka) Then
+        
+' Usuń spacje na końcu tekstu
+            komorka.Value = RTrim$(komorka.Value)
+        End If
+    Next komorka
+
+
+'sortowanie danych
+'sortowanie po typie
+    Range("B7:G" & 7 + Iloscwierszy - 1).Select
+    ActiveWorkbook.Worksheets("Propozycja projektu").Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Propozycja projektu").Sort.SortFields.Add2 Key:= _
+        Range("E8:E9"), _
+        SortOn:=xlSortOnValues, _
+        Order:=xlAscending, _
+        CustomOrder:= _
+        "GMV5 Mini Pompa Ciepła (EU),GMV5 Slim Pompa Ciepła (EU),GMV6 Pompa Ciepła (EU),GMV6 Heat Recovery (EU),Ścienna (BLDC-B4),Kasetonowa 360° kompaktowa,Kasetonowa 360° ,Kasetonowa 2-stronna (seria B),Kasetonowa 1-stronna,Konsola,Przypodłogowo-sufitowa (seria B),Kanałowa niskiego sprężu,Kanałowa wysokiego sprężu (seria A),Kanałowa wysokiego sprężu (seria B),AHU-KIT (seria C)", _
+        DataOption:=xlSortNormal
+        
+'sortowanie po modelu
+    ActiveWorkbook.Worksheets("Propozycja projektu").Sort.SortFields.Add2 Key:= _
+        Range("C8:C9"), SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:= _
+        xlSortNormal
+    With ActiveWorkbook.Worksheets("Propozycja projektu").Sort
+        .SetRange Range("B7:G" & 7 + Iloscwierszy - 1)
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    
+'scalenie wierszy
+For i = 1 To Iloscwierszy
+    Range("c6:d6").Offset(0 + i, 0).Select
+    Selection.Merge
+    Range("e6:f6").Offset(0 + i, 0).Select
+    Selection.Merge
+   Next i
+   
+'numerowanie wierszy
+For i = 0 To (Iloscwierszy - 2)
+    Range("b8").Offset(0 + i, 0).Value = i + 1
+Next i
+    
+ 
+End Sub
